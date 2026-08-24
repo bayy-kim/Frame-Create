@@ -17,15 +17,19 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const { productName, productPrice, highlights, imageUrls } = body
+    const { productName, productPrice, highlights, imageUrls, aiModel } = body
 
     if (!productName || !imageUrls || !Array.isArray(imageUrls) || imageUrls.length === 0) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
+    // Determine extra cost if using Pro models
+    const isPro = aiModel?.includes('pro')
+    const videoCostPerImage = isPro ? CREDIT_COSTS.VIDEO_CLIP_PER_IMAGE * 2 : CREDIT_COSTS.VIDEO_CLIP_PER_IMAGE
+
     // Calculate initial estimated cost
     const estimatedCost = CREDIT_COSTS.SCRIPT + 
-                          (imageUrls.length * CREDIT_COSTS.VIDEO_CLIP_PER_IMAGE) + 
+                          (imageUrls.length * videoCostPerImage) + 
                           CREDIT_COSTS.VOICEOVER + 
                           CREDIT_COSTS.ASSEMBLY
 
@@ -39,7 +43,8 @@ export async function POST(request: Request) {
         input_product_price: productPrice || '',
         input_product_highlights: highlights || '',
         input_image_urls: imageUrls,
-        credit_cost: estimatedCost
+        credit_cost: estimatedCost,
+        ai_model: aiModel || 'fal-ai/kling-video/v1/standard/image-to-video'
       })
       .select()
       .single()

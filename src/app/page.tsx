@@ -134,6 +134,10 @@ export default function LandingPage() {
 
       {/* Minimal Footer */}
       <footer className="w-full py-8 text-center text-sm text-muted-foreground border-t border-border/50">
+        <div className="flex justify-center gap-4 mb-4">
+          <Link href="/terms" className="hover:text-primary transition-colors">Syarat & Ketentuan</Link>
+          <Link href="/privacy" className="hover:text-primary transition-colors">Kebijakan Privasi</Link>
+        </div>
         <p>© 2026 Frame Craft. Hak Cipta Dilindungi.</p>
       </footer>
     </div>

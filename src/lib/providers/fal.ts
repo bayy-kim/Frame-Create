@@ -3,9 +3,9 @@ import { fal } from "@fal-ai/client";
 // Ensure fal is configured to use the proxy in production to hide the API key
 // For MVP/Server actions, we can call it directly since server actions run on the server
 
-export async function generateImageToVideo(imageUrl: string, prompt: string = "A slow cinematic pan, product showcase, high quality, 4k") {
+export async function generateImageToVideo(imageUrl: string, aiModel: string = "fal-ai/kling-video/v1/standard/image-to-video", prompt: string = "A slow cinematic pan, product showcase, high quality, 4k") {
   try {
-    const result: any = await fal.subscribe("fal-ai/kling-video/v1/standard/image-to-video", {
+    const result: any = await fal.subscribe(aiModel, {
       input: {
         image_url: imageUrl,
         prompt: prompt,

@@ -37,7 +37,7 @@ export default async function DashboardPage() {
               </span>
             </div>
           </Link>
-          <div className="w-10 h-10 rounded-full bg-secondary overflow-hidden shadow-clay-pressed">
+          <div className="w-10 h-10 rounded-full bg-secondary overflow-hidden shadow-clay-pressed hidden sm:block">
             {user?.user_metadata?.avatar_url && (
               <img src={user.user_metadata.avatar_url} alt="Profile" className="w-full h-full object-cover" />
             )}

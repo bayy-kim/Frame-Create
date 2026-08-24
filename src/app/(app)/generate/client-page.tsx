@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { createClient } from "@/lib/insforge/client"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { toast } from "sonner"
 
 export default function GenerateClientPage() {
   const [step, setStep] = useState(1)
@@ -16,7 +17,8 @@ export default function GenerateClientPage() {
     productName: "",
     productPrice: "",
     highlights: "",
-    imageUrls: [] as string[]
+    imageUrls: [] as string[],
+    aiModel: "fal-ai/kling-video/v1/standard/image-to-video"
   })
 
   // Polling logic for step 3
@@ -35,8 +37,9 @@ export default function GenerateClientPage() {
             if (data.status === 'done') {
               setVideoUrl(data.output_video_url)
               setStep(4)
+              toast.success("Video berhasil dibuat!")
             } else if (data.status === 'failed') {
-              alert("Generate failed: " + data.error_message)
+              toast.error("Gagal membuat video: " + data.error_message)
               setStep(1) // Reset or handle error state properly
             }
           }
@@ -59,7 +62,7 @@ export default function GenerateClientPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (formData.imageUrls.length === 0) {
-      alert("Upload minimal 1 foto produk")
+      toast.warning("Upload minimal 1 foto produk")
       return
     }
 
@@ -80,8 +83,9 @@ export default function GenerateClientPage() {
       setGenerationId(data.generationId)
       setStep(3) // Jump straight to generating progress for MVP
       setStatus('queued')
+      toast.info("Video sedang diproses. Ini bisa memakan waktu 1-3 menit.")
     } catch (error: any) {
-      alert(error.message)
+      toast.error(error.message)
     } finally {
       setLoading(false)
     }
@@ -168,6 +172,21 @@ export default function GenerateClientPage() {
                   onChange={e => setFormData(prev => ({...prev, highlights: e.target.value}))}
                   placeholder="Misal: Bahan tebal, muat banyak, cocok buat kuliah" 
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="model">Model AI Video</Label>
+                <Select value={formData.aiModel} onValueChange={(v: string | null) => { if(v) setFormData(prev => ({...prev, aiModel: v})) }}>
+                  <SelectTrigger id="model" className="w-full h-10 px-3 bg-white shadow-clay-pressed rounded-xl border-transparent">
+                    <SelectValue placeholder="Pilih Model" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="fal-ai/kling-video/v1/standard/image-to-video">Kling V1 Standard</SelectItem>
+                    <SelectItem value="fal-ai/kling-video/v1/pro/image-to-video">Kling V1 Pro (Kualitas Tinggi)</SelectItem>
+                    <SelectItem value="fal-ai/luma-dream-machine/v1/image-to-video">Luma Dream Machine V1</SelectItem>
+                    <SelectItem value="fal-ai/runway-gen3/turbo/image-to-video">Runway Gen-3 Turbo</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <Button type="submit" className="w-full mt-4" disabled={loading || formData.imageUrls.length === 0}>

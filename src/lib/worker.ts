@@ -41,7 +41,7 @@ export async function processGeneration(generationId: string) {
     // Generate clips sequentially or in parallel
     for (const imgUrl of gen.input_image_urls) {
       try {
-        const clipUrl = await generateImageToVideo(imgUrl, "cinematic product showcase")
+        const clipUrl = await generateImageToVideo(imgUrl, gen.ai_model || "fal-ai/kling-video/v1/standard/image-to-video", "cinematic product showcase")
         clipUrls.push(clipUrl)
       } catch (err) {
         console.error("Failed to generate clip for image", imgUrl, err)
