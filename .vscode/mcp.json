@@ -1,0 +1,9 @@
+{
+	"servers": {
+		"InsForge Docs": {
+			"url": "https://docs.insforge.dev/mcp",
+			"type": "http"
+		}
+	},
+	"inputs": []
+}
