@@ -1,9 +1,14 @@
 import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 export async function initiateOAuth() {
   const cookieStore = await cookies()
+  const headersList = await headers()
+  const host = headersList.get('host')
+  const protocol = host?.startsWith('localhost') ? 'http' : 'https'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || (host ? `${protocol}://${host}` : 'https://r3jzjkpq.insforge.site')
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_INSFORGE_URL!,
     process.env.NEXT_PUBLIC_INSFORGE_ANON_KEY!,
@@ -22,8 +27,6 @@ export async function initiateOAuth() {
       },
     }
   )
-
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://r3jzjkpq.insforge.site'
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',

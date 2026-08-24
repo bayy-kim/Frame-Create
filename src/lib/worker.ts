@@ -1,16 +1,10 @@
-import { createClient } from "./insforge/server"
+import { createServiceClient } from "./insforge/service"
 import { generateScriptAndCaption } from "./providers/gemini"
 import { generateImageToVideo } from "./providers/fal"
 import { generateVoiceover, assembleVideo } from "./providers/json2video"
 
 export async function processGeneration(generationId: string) {
-  // We need a service role client to update records asynchronously after the initial request ends
-  // For MVP in Next.js, we might struggle with true background tasks without external services.
-  // Assuming this is called in an environment that supports it, or as part of a long-running API route.
-  
-  // Note: createClient() here uses cookies which might not be available in a true background worker.
-  // We should ideally pass the required auth tokens or use a service role key.
-  const supabase = await createClient()
+  const supabase = createServiceClient()
 
   try {
     // 1. Fetch generation details
